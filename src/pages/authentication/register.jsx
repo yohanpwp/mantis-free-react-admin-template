@@ -12,6 +12,9 @@ import AuthRegister from './auth-forms/AuthRegister';
 // ================================|| REGISTER ||================================ //
 
 export default function Register() {
+  // เปลี่ยน header หน้าเพจ Register
+  document.title = 'SCB Payment - Register';
+
   return (
     <AuthWrapper>
       <Grid container spacing={3}>

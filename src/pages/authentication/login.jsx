@@ -12,6 +12,9 @@ import AuthLogin from './auth-forms/AuthLogin';
 // ================================|| LOGIN ||================================ //
 
 export default function Login() {
+  // เปลี่ยน header หน้าเพจล็อคอิน
+  document.title = 'SCB Payment - Login';
+
   return (
     <AuthWrapper>
       <Grid container spacing={3}>

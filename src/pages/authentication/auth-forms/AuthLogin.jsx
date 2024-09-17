@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
@@ -20,9 +21,11 @@ import Typography from '@mui/material/Typography';
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import Swal from 'sweetalert2';
 
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
+import { checkLogin } from '../../../utils/userdatabase';
 
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
@@ -35,6 +38,9 @@ export default function AuthLogin({ isDemo = false }) {
   const [checked, setChecked] = React.useState(false);
 
   const [showPassword, setShowPassword] = React.useState(false);
+
+  const navigate = useNavigate();
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -43,40 +49,81 @@ export default function AuthLogin({ isDemo = false }) {
     event.preventDefault();
   };
 
+  const handleSubmitLogin = async (value) => {
+    // call your login API here
+    console.log('Login form submitted', value);
+    if (value.username == '' || value.password == '') {
+      return;
+    } else {
+      const data = await checkLogin(value);
+      if (data.message == 'User logged in successfully') {
+        // Create a new session to go to the page
+        if (checked) {
+          localStorage.setItem('token', value.username);
+        } else {
+          sessionStorage.setItem('token', value.username);
+        }
+        // Display success message and redirect to payment page
+        Swal.fire({
+          icon: 'success',
+          title: data.message,
+          showConfirmButton: false,
+          timer: 3000
+        }).then(
+          setTimeout(function () {
+            navigate('/payment');
+          }, 3000)
+        );
+      } else {
+        // Display error messages
+        Swal.fire({
+          icon: 'error',
+          title: 'Login Failed',
+          text: data.message,
+          showConfirmButton: false,
+          showCloseButton: true,
+          timer: 5000
+        });
+      }
+    }
+    // handle success or failure
+  };
+
   return (
     <>
       <Formik
         initialValues={{
-          email: '',
+          username: '',
           password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          username: Yup.string().max(255).required('Username is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
+        onSubmit={(values) => handleSubmitLogin(values)}
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-login">Username</InputLabel>
                   <OutlinedInput
                     id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
+                    type="name"
+                    value={values.username}
+                    name="username"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Enter your username"
                     fullWidth
-                    error={Boolean(touched.email && errors.email)}
+                    error={Boolean(touched.username && errors.username)}
                   />
                 </Stack>
-                {touched.email && errors.email && (
+                {touched.username && errors.username && (
                   <FormHelperText error id="standard-weight-helper-text-email-login">
-                    {errors.email}
+                    {errors.username}
                   </FormHelperText>
                 )}
               </Grid>
@@ -129,9 +176,9 @@ export default function AuthLogin({ isDemo = false }) {
                     }
                     label={<Typography variant="h6">Keep me sign in</Typography>}
                   />
-                  <Link variant="h6" component={RouterLink} color="text.primary">
+                  {/* <Link variant="h6" component={RouterLink} color="text.primary">
                     Forgot Password?
-                  </Link>
+                  </Link> */}
                 </Stack>
               </Grid>
               {errors.submit && (
