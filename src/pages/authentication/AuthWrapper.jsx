@@ -20,7 +20,7 @@ export default function AuthWrapper({ children }) {
       <AuthBackground />
       <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
         <Grid item xs={12} sx={{ ml: 3, mt: 3 }}>
-          <Logo />
+          {/* <Logo /> เพิ่ม logo header หน้า login*/}
         </Grid>
         <Grid item xs={12}>
           <Grid

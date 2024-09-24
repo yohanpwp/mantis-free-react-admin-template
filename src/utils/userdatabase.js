@@ -15,7 +15,7 @@ export async function checkLogin(value) {
     return response.data;
   } catch (error) {
     console.error(error);
-    return error.response.data;
+    return error;
   }
 }
 
@@ -37,22 +37,23 @@ export async function registerUser(value) {
   }
 }
 
-export async function getUserData(username) {
+export async function getUserData() {
   // ตั้งค่า URL ของ API ที่ต้องการใช้
+  let token = window.localStorage.getItem('token');
+  const tokenWithoutQuotes = token?.replace(/"/g, '');
   let config = {
-    url: import.meta.env.MODE === 'production' ? import.meta.env.VITE_API_GET_USER + username : import.meta.env.VITE_GET_USER + username,
+    url: import.meta.env.MODE === 'production' ? import.meta.env.VITE_API_GET_USER : import.meta.env.VITE_GET_USER,
     'content-type': 'application/json',
-    method: 'post',
-    data: { username: username } // ส่งข้อมูล username ไปยัง API
+    maxBodyLength: Infinity,
+    method: 'get',
+    headers: {
+      authorization: 'Bearer ' + tokenWithoutQuotes
+    }
   };
   // ส่ง request และรับ response ที่ได้มา
   try {
     let response = await axios.request(config);
-    if (username) {
-      return response.data;
-    } else {
-      return 'Error: Username or Password is missing';
-    }
+    return response.data;
   } catch (error) {
     console.error(error);
     return error;

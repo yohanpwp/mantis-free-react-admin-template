@@ -90,8 +90,8 @@ export default function MobileSection() {
             <Paper sx={{ boxShadow: theme.customShadows.z1 }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
-                  <Toolbar>
-                    <Search />
+                  <Toolbar sx={{ display: 'flex', justifyContent: 'end' }}>
+                    {/* <Search /> */}
                     <Profile />
                   </Toolbar>
                 </AppBar>

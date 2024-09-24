@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -23,6 +23,8 @@ import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
+import { useAuth } from 'hooks/useAuth';
+import { getUserData } from 'utils/userdatabase';
 
 // assets
 import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
@@ -46,6 +48,8 @@ function a11yProps(index) {
   };
 }
 
+// ==============================|| INPUT VALUE ||============================== //
+
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
@@ -53,6 +57,21 @@ export default function Profile() {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState('');
+
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    const getData = async () => {
+      const userData = await getUserData();
+      if (userData) {
+        const user = { firstName: userData.firstName, lastName: userData.lastName, username: userData.username };
+        setUser(user);
+      }
+    };
+    getData();
+  }, [setUser]);
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -68,6 +87,11 @@ export default function Profile() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    logout();
   };
 
   const iconBackColorOpen = 'grey.100';
@@ -91,7 +115,7 @@ export default function Profile() {
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            John Doe
+            {`${user.firstName} ${user.lastName}`}
           </Typography>
         </Stack>
       </ButtonBase>
@@ -115,7 +139,7 @@ export default function Profile() {
       >
         {({ TransitionProps }) => (
           <Transitions type="grow" position="top-right" in={open} {...TransitionProps}>
-            <Paper sx={{ boxShadow: theme.customShadows.z1, width: 290, minWidth: 240, maxWidth: { xs: 250, md: 290 } }}>
+            <Paper sx={{ boxShadow: theme.customShadows.z1, minWidth: { xs: 250, md: 300 }, maxWidth: { xs: 250, md: 350 } }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard elevation={0} border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>
@@ -124,16 +148,16 @@ export default function Profile() {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{`${user.firstName} ${user.lastName}`}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              {user.username}
                             </Typography>
                           </Stack>
                         </Stack>
                       </Grid>
                       <Grid item>
                         <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
+                          <IconButton size="large" onClick={handleLogout} sx={{ color: 'text.primary', marginLeft: '10px' }}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>
@@ -141,7 +165,7 @@ export default function Profile() {
                     </Grid>
                   </CardContent>
 
-                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                  {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="profile tabs">
                       <Tab
                         sx={{
@@ -168,13 +192,13 @@ export default function Profile() {
                         {...a11yProps(1)}
                       />
                     </Tabs>
-                  </Box>
-                  <TabPanel value={value} index={0} dir={theme.direction}>
+                  </Box> */}
+                  {/* <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
                     <SettingTab />
-                  </TabPanel>
+                  </TabPanel> */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>

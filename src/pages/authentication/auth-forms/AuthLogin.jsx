@@ -26,6 +26,7 @@ import Swal from 'sweetalert2';
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
 import { checkLogin } from '../../../utils/userdatabase';
+import { useAuth } from 'hooks/useAuth';
 
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
@@ -40,6 +41,7 @@ export default function AuthLogin({ isDemo = false }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -49,32 +51,33 @@ export default function AuthLogin({ isDemo = false }) {
     event.preventDefault();
   };
 
+  const handleClickKeepSign = (value) => {
+    if (value == false) {
+      setChecked(true);
+    }
+  };
+
   const handleSubmitLogin = async (value) => {
     // call your login API here
-    console.log('Login form submitted', value);
     if (value.username == '' || value.password == '') {
       return;
     } else {
       const data = await checkLogin(value);
       if (data.message == 'User logged in successfully') {
-        // Create a new session to go to the page
-        if (checked) {
-          localStorage.setItem('token', value.username);
-        } else {
-          sessionStorage.setItem('token', value.username);
-        }
         // Display success message and redirect to payment page
+        await auth.login(data.token);
+      } else if (data) {
+        // Display error message
         Swal.fire({
-          icon: 'success',
-          title: data.message,
+          icon: 'error',
+          title: 'Login Failed',
+          text: data.message,
           showConfirmButton: false,
-          timer: 3000
-        }).then(
-          setTimeout(function () {
-            navigate('/payment');
-          }, 3000)
-        );
+          showCloseButton: true,
+          timer: 5000
+        });
       } else {
+        console.log(data);
         // Display error messages
         Swal.fire({
           icon: 'error',
@@ -95,6 +98,7 @@ export default function AuthLogin({ isDemo = false }) {
         initialValues={{
           username: '',
           password: '',
+          rememberMe: checked,
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -166,13 +170,7 @@ export default function AuthLogin({ isDemo = false }) {
                 <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                   <FormControlLabel
                     control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        color="primary"
-                        size="small"
-                      />
+                      <Checkbox checked={values.rememberMe} onChange={handleChange} name="rememberMe" color="primary" size="small" />
                     }
                     label={<Typography variant="h6">Keep me sign in</Typography>}
                   />
@@ -193,14 +191,14 @@ export default function AuthLogin({ isDemo = false }) {
                   </Button>
                 </AnimateButton>
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Divider>
                   <Typography variant="caption"> Login with</Typography>
                 </Divider>
               </Grid>
               <Grid item xs={12}>
                 <FirebaseSocial />
-              </Grid>
+              </Grid> */}
             </Grid>
           </form>
         )}

@@ -217,18 +217,20 @@ export default function AuthRegister() {
                     {errors.password}
                   </FormHelperText>
                 )}
-                <FormControl fullWidth sx={{ mt: 2 }}>
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                      <Box sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }} />
+                {values.password && (
+                  <FormControl fullWidth sx={{ mt: 2 }}>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item>
+                        <Box sx={{ bgcolor: level?.color, width: 85, height: 8, borderRadius: '7px' }} />
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="subtitle1" fontSize="0.75rem">
+                          {level?.label}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item>
-                      <Typography variant="subtitle1" fontSize="0.75rem">
-                        {level?.label}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                </FormControl>
+                  </FormControl>
+                )}
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
@@ -268,7 +270,7 @@ export default function AuthRegister() {
                   </FormHelperText>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Typography variant="body2">
                   By Signing up, you agree to our &nbsp;
                   <Link variant="subtitle2" component={RouterLink} to="#">
@@ -279,7 +281,7 @@ export default function AuthRegister() {
                     Privacy Policy
                   </Link>
                 </Typography>
-              </Grid>
+              </Grid> */}
               {errors.submit && (
                 <Grid item xs={12}>
                   <FormHelperText error>{errors.submit}</FormHelperText>

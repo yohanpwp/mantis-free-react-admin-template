@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useAuth } from 'hooks/useAuth';
 
 // material-ui
 import List from '@mui/material/List';
@@ -19,8 +20,15 @@ import WalletOutlined from '@ant-design/icons/WalletOutlined';
 export default function ProfileTab() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const { logout } = useAuth();
+
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
+  };
+
+  const handleLogout = () => {
+    // Add your logout logic here
+    logout();
   };
 
   return (
@@ -50,7 +58,7 @@ export default function ProfileTab() {
         </ListItemIcon>
         <ListItemText primary="Billing" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2}>
+      <ListItemButton selected={selectedIndex === 2} onClick={handleLogout}>
         <ListItemIcon>
           <LogoutOutlined />
         </ListItemIcon>

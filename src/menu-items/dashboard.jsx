@@ -1,10 +1,11 @@
 // assets
-import { DashboardOutlined, CreditCardOutlined } from '@ant-design/icons';
+import { DashboardOutlined, CreditCardOutlined, FieldTimeOutlined  } from '@ant-design/icons';
 
 // icons
 const icons = {
   DashboardOutlined,
-  CreditCardOutlined
+  CreditCardOutlined,
+  FieldTimeOutlined
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -14,21 +15,39 @@ const dashboard = {
   title: 'Navigation',
   type: 'group',
   children: [
-    {
-      id: 'dashboard',
-      title: 'Dashboard',
-      type: 'item',
-      url: '/dashboard/default',
-      icon: icons.DashboardOutlined,
-      breadcrumbs: false
-    },
+    // {
+    //   id: 'dashboard',
+    //   title: 'Dashboard',
+    //   type: 'item',
+    //   url: '/dashboard/default',
+    //   icon: icons.DashboardOutlined,
+    //   breadcrumbs: false
+    // },
     {
       id: 'payment',
       title: 'Payment',
-      type: 'item',
-      url: '/payment/default',
+      type: 'collapse',
+      url: '/payment',
       icon: icons.CreditCardOutlined,
-      breadcrumbs: false
+      breadcrumbs: false,
+      children: [
+        {
+          id: 'payment-default',
+          title: 'QR Code',
+          type: 'item',
+          url: '/payment/default',
+          icon: icons.CreditCardOutlined,
+          breadcrumbs: false
+        },
+        {
+          id: 'payment-history',
+          title: 'History',
+          type: 'item',
+          url: '/payment/history',
+          icon: icons.FieldTimeOutlined,
+          breadcrumbs: false
+        }
+      ]
     }
   ]
 };

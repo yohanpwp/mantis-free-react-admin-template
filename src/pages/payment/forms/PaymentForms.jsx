@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -21,39 +21,96 @@ import Box from '@mui/material/Box';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
+import { UserContext } from 'contexts/auth-reducer/ีuserprovider/UserProvider';
 
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
 import { strengthColor, strengthIndicator } from 'utils/password-strength';
+import { postToken, getQRCode, postSaveHistoryQrCode } from 'utils/qrdatabase';
+import { getUserData } from 'utils/userdatabase';
 
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
+import { width } from '@mui/system';
 
 // ============================|| INPUT VALUES ||============================ //
 
-
-
-
 // ============================|| OUTPUT VALUES ||============================ //
 export default function PaymentForm() {
+  const { isLoading, setIsLoading, data, setData } = useContext(UserContext);
+  // กำหนด state ที่ใช้ในโปรแกรม
+  const [qrImage, setQrImage] = useState('');
+  const [ref, setRef] = useState('');
+
+  // เมื่อกด submit ให้ส่งค่า amount ไปยัง api  เพื่อรับ qr code
+  const onSubmit = async (values) => {
+    setIsLoading(true);
+    if (values.amounts <= 0) {
+      Swal.fire({
+        icon: 'error',
+        text: 'กรุณากรอกจำนวนเงินให้ถูกต้อง',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(setIsLoading(false));
+      return;
+    } else if (values.amounts.toString().includes('.')) {
+      if (values.amounts.toString().split('.')[1].length > 2) {
+        Swal.fire({
+          icon: 'error',
+          text: 'กรอกจำนวนเงินได้จำนวนจุดทศนิยมมากที่สุด 2 ตำแหน่งเท่านั้น',
+          showConfirmButton: false,
+          timer: 1500
+        }).then(setIsLoading(false));
+        return;
+      }
+    }
+    //1.Get Token from SCB Api
+    let url = 'https://api.scb.eorder.smart-ms2.com/api/scb/token';
+    const token = await postToken(url);
+    // 2. Generate QR Image from SCB Api
+    const data = await getQRCode(token, values.amounts);
+    const value = {
+      body: data,
+      amounts: values.amounts,
+      token: token,
+      customerName: values.customerName,
+      remark: values.remark
+    };
+    setRef(data.qrBody.ref1);
+    setData(values.amounts);
+    setQrImage(data.image);
+    setIsLoading(false);
+    postSaveHistoryQrCode(value);
+  };
+
+  const onReset = () => {
+    setRef('');
+    setData('');
+    setQrImage('');
+  };
+
   return (
     //... other form fields...
     <div>
       <Formik
         initialValues={{
           customerName: '',
-          amount: '',
+          amounts: '',
           remark: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
           customerName: Yup.string().max(255).required('Customer Name is required'),
-          amount: Yup.number().positive().required('Amount is required')
+          amounts: Yup.number().positive().required('Amount is required')
         })}
+        onSubmit={(values) => {
+          onSubmit(values);
+        }}
+        onReset={onReset}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit}>
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, handleReset }) => (
+          <form noValidate onSubmit={handleSubmit} onReset={handleReset}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
@@ -79,30 +136,75 @@ export default function PaymentForm() {
                   required
                   id="outlined-required"
                   label="Amounts"
-                  name="amount"
+                  name="amounts"
+                  type="number"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.amount}
-                  error={Boolean(touched.amount && errors.amount)}
-                  slotProps={{
+                  value={values.amounts}
+                  error={Boolean(touched.amounts && errors.amounts)}
+                  slotprops={{
                     input: {
-                      endAdornment: <InputAdornment position="end">฿</InputAdornment>,
+                      endAdornment: <InputAdornment position="end">฿</InputAdornment>
                     }
                   }}
                   helperText="Fill your amounts here"
                 />
               </Grid>
               <Grid item xs>
-                <TextField fullWidth id="outlined-required" label="Remark" defaultValue="-" name="remark" />
+                <TextField
+                  fullWidth
+                  id="outlined-required"
+                  label="Remark"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  name="remark"
+                  value={values.remark}
+                />
               </Grid>
               <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Create QR Code
-                  </Button>
-                </AnimateButton>
+                <Stack
+                  direction="row"
+                  spacing={3}
+                  sx={{
+                    justifyContent: 'center',
+                    alignItems: 'baseline'
+                  }}
+                >
+                  <AnimateButton>
+                    <Button
+                      disableElevation
+                      disabled={isSubmitting}
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      onSubmit={handleSubmit}
+                    >
+                      Create QR Code
+                    </Button>
+                  </AnimateButton>
+                  <AnimateButton>
+                    <Button disableElevation size="large" type="reset" variant="contained" color="secondary" onReset={handleReset}>
+                      Clear
+                    </Button>
+                  </AnimateButton>
+                </Stack>
               </Grid>
             </Grid>
+            {ref && data && (
+              <Stack
+                spacing={3}
+                sx={{
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img style={{ marginTop: '20px' }} src={'data:image/png;base64,' + qrImage} alt="qr code you wanted" />
+                <Typography>รหัสอ้างอิง : {ref}</Typography>
+                <Typography>จำนวนเงินของคุณคือ {data} บาท</Typography>
+              </Stack>
+            )}
           </form>
         )}
       </Formik>

@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 // ฟังก์ชั่นตั้งเวลาจากเวลาปัจจุบันกี่นาที
 function addTimeinMinutes(min) {
   const dateoptions = {
@@ -80,7 +79,6 @@ export async function postToken(url) {
 export async function getQRCode(token, amount) {
   let expiryDate = addTimeinMinutes(3);
   let ranHex8digits = getRanHex(8); //random hexadecimal generator 8 digits
-  console.log(expiryDate);
   const qrHead = {
     'Content-Type': 'application/json',
     authorization: 'Bearer ' + token, //ต้องรับค่า token ไว้ให้ นปก.
@@ -110,7 +108,6 @@ export async function getQRCode(token, amount) {
   };
   try {
     const response = await axios.request(config);
-    console.log(expiryDate);
     return { image: response.data.data.qrImage, qrBody: qrBody }; //ดึงข้อมูล qrImage จาก property data ใน web API
   } catch {
     (err) => {
@@ -122,10 +119,15 @@ export async function getQRCode(token, amount) {
 // ฟังก์ชั่นบันทีกข้อมูลการสร้าง QR Code ส่งฐานข้อมูลเก็บเป็นประวัติ
 export async function postSaveHistoryQrCode(value) {
   // ตั้งค่า URL ของ API ที่ต้องการใช้
+  let token = window.localStorage.getItem('token');
+  const tokenWithoutQuotes = token?.replace(/"/g, '');
   let config = {
     url: import.meta.env.MODE === 'production' ? import.meta.env.VITE_API_HISTORY_DATABASE : import.meta.env.VITE_HISTORY_DATABASE,
     'content-type': 'application/json',
     method: 'post',
+    headers: {
+      authorization: 'Bearer ' + tokenWithoutQuotes
+    },
     data: value // ส่งข้อมูล username, password ไปยัง API
   };
   // ส่ง request และรับ response ที่ได้มา
