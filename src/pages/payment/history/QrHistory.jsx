@@ -1,10 +1,8 @@
 // import reactHooks from react
-import { useEffect, useContext, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useContext, useState } from 'react';
 // import from 3rd party
 import Swal from 'sweetalert2';
 // material-ui
-import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses } from '@mui/x-data-grid';
@@ -52,7 +50,7 @@ const QrHistory = () => {
   // set state
   const [open, setOpen] = useState(false);
   const [ref1, setRef1] = useState('');
-  const { data, setData } = useContext(UserContext);
+  const { data, setData, setIsLoading } = useContext(UserContext);
 
   const getUsername = async () => {
     const userData = await getUserData();
@@ -61,9 +59,11 @@ const QrHistory = () => {
 
   useEffect(() => {
     const getData = async () => {
+      setIsLoading(true);
       let user = await getUsername();
       if (user) {
         let data = await getHistoryQrCode(user);
+        setIsLoading(false);
         setData(data);
       }
     };
@@ -174,18 +174,16 @@ const QrHistory = () => {
 
   const paginationModel = { page: 0, pageSize: 5 };
   return (
-    <Paper sx={{ height: 400, width: '100%' }}>
-      <StripedDataGrid
-        rows={rows}
-        rowHeight={60}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        spacing={1}
-        sx={{ border: 0 }}
-        getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
-      />
-    </Paper>
+    <StripedDataGrid
+      rows={rows}
+      rowHeight={60}
+      columns={columns}
+      initialState={{ pagination: { paginationModel } }}
+      pageSizeOptions={[5, 10]}
+      spacing={1}
+      sx={{ border: 0 }}
+      getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
+    />
   );
 };
 

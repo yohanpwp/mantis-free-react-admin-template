@@ -4,9 +4,14 @@ import { useNavigate } from 'react-router-dom';
 // import from 3rd party
 import Swal from 'sweetalert2';
 
+//project import
+import { getUserData } from 'utils/userdatabase';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // create user data provider instance
+  const [userData, setUserData] = useState({});
   //synchronizes the state value with the browser’s local storage
   const useLocalStorage = (keyName, defaultValue) => {
     const [storedValue, setStoredValue] = useState(() => {
@@ -63,6 +68,7 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       user,
+      userData,
       login,
       logout
     }),
