@@ -1,12 +1,8 @@
-// import reactHooks from react
-import { useEffect, useContext, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 // import from 3rd party
 
 // material-ui
-import { Box, Modal, Typography, Button } from '@mui/material';
-// project import
-import { getHistoryQrCode } from 'utils/qrdatabase';
+import { Box, Modal, Typography } from '@mui/material';
+
 
 // ==============================|| INPUT STYLE ||============================== //
 const style = {

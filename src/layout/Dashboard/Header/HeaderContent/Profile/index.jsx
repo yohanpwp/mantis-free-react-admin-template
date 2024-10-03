@@ -70,7 +70,7 @@ export default function Profile() {
       }
     };
     getData();
-  }, [setUser]);
+  }, []);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);

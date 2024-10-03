@@ -1,21 +1,13 @@
-import { useEffect, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link as RouterLink } from 'react-router-dom';
+import { useState, useContext } from 'react';
 
 // material-ui
 import Button from '@mui/material/Button';
-import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import InputAdornment, { inputAdornmentClasses } from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
 import { TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 
 // third party
 import * as Yup from 'yup';
@@ -25,14 +17,7 @@ import { UserContext } from 'contexts/auth-reducer/ีuserprovider/UserProvider'
 
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
-import { strengthColor, strengthIndicator } from 'utils/password-strength';
 import { postToken, getQRCode, postSaveHistoryQrCode } from 'utils/qrdatabase';
-import { getUserData } from 'utils/userdatabase';
-
-// assets
-import EyeOutlined from '@ant-design/icons/EyeOutlined';
-import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-import { width } from '@mui/system';
 
 // ============================|| INPUT VALUES ||============================ //
 
@@ -77,8 +62,8 @@ export default function PaymentForm() {
       customerName: values.customerName,
       remark: values.remark
     };
-    setRef(data.qrBody.ref1);
-    setData(values.amounts);
+    setRef(data.qrBody);
+    setData(values);
     setQrImage(data.image);
     setIsLoading(false);
     postSaveHistoryQrCode(value);
@@ -193,17 +178,20 @@ export default function PaymentForm() {
               </Grid>
             </Grid>
             {ref && data && (
-              <Stack
-                spacing={3}
-                sx={{
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img style={{ marginTop: '20px' }} src={'data:image/png;base64,' + qrImage} alt="qr code you wanted" />
-                <Typography>รหัสอ้างอิง : {ref}</Typography>
-                <Typography>จำนวนเงินของคุณคือ {data} บาท</Typography>
-              </Stack>
+              <Grid columnSpacing={3} container={true} direction={'row'} sx={{ justifyContent: 'center' }}>
+                <Grid size={9}>
+                  <img style={{ marginTop: '20px' }} src={'data:image/png;base64,' + qrImage} alt="qr code you wanted" />
+                </Grid>
+                <Grid size={3}>
+                  <Stack sx={{ margin: '50px 20px', alignContent: 'center', justifyContent: 'center' }}>
+                    <Typography>รหัสอ้างอิง : {ref.ref1}</Typography>
+                    <Typography>จำนวนเงิน : {data.amounts} บาท</Typography>
+                    <Typography>ชื่อของลูกค้า : {data.customerName}</Typography>
+                    <Typography>หมดเวลาแสกน : {' ' + ref.expiryDate.split(' ')[1] + ' น.'}</Typography>
+                    {values.remark && <Typography>หมายเหตุ : {data.remark}</Typography>}
+                  </Stack>
+                </Grid>
+              </Grid>
             )}
           </form>
         )}

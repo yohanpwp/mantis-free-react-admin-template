@@ -169,3 +169,56 @@ export const checkQrResponse = async (ref) => {
     return error;
   }
 };
+
+// ฟังก์ชั่นแก้ไขข้อมูลการ QR Code จากฐานข้อมูล
+const editHistoryQrCode = async (value) => {
+  // ตั้งค่า URL ของ API ที่ต้องการใช้
+  let token = window.localStorage.getItem('token');
+  const tokenWithoutQuotes = token?.replace(/"/g, '');
+  let config = {
+    url:
+      import.meta.env.MODE === 'production' ? import.meta.env.VITE_API_EDIT_HISTORY_DATABASE : import.meta.env.VITE_EDIT_HISTORY_DATABASE,
+    'content-type': 'application/json',
+    maxBodyLength: Infinity,
+    method: 'put',
+    headers: {
+      authorization: 'Bearer ' + tokenWithoutQuotes
+    },
+    data: value // ส่งข้อมูล id,customer,status,remark ไปยัง API
+  };
+  // ส่ง request และรับ response ที่ได้มา
+  try {
+    let response = await axios.request(config);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+// ฟังก์ชั่นลบข้อมูลการ QR Code จากฐานข้อมูล
+const deleteHistoryQrCode = async (value) => {
+  let token = window.localStorage.getItem('token');
+  const tokenWithoutQuotes = token?.replace(/"/g, '');
+  // ตั้งค่า URL ของ API ที่ต้องการใช้
+  let config = {
+    url:
+      import.meta.env.MODE === 'production'
+        ? import.meta.env.VITE_API_DELETE_HISTORY_DATABASE
+        : import.meta.env.VITE_DELETE_HISTORY_DATABASE,
+    'content-type': 'application/json',
+    maxBodyLength: Infinity,
+    method: 'put',
+    headers: {
+      authorization: 'Bearer ' + tokenWithoutQuotes
+    },
+    data: value // ส่งข้อมูล id ไปยัง API
+  };
+  // ส่ง request และรับ response ที่ได้มา
+  
+    let response = await axios.request(config);
+    return response.data;
+  
+};
+
+export const history = { editHistoryQrCode, deleteHistoryQrCode };

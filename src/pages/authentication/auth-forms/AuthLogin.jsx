@@ -98,7 +98,7 @@ export default function AuthLogin({ isDemo = false }) {
         initialValues={{
           username: '',
           password: '',
-          rememberMe: checked,
+          rememberMe: false,
           submit: null
         }}
         validationSchema={Yup.object().shape({
