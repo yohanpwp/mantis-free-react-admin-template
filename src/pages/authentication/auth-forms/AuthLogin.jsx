@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
@@ -40,6 +41,8 @@ export default function AuthLogin({ isDemo = false }) {
 
   const [showPassword, setShowPassword] = React.useState(false);
 
+  // use translation hook for i18n
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const auth = useAuth();
 
@@ -102,8 +105,8 @@ export default function AuthLogin({ isDemo = false }) {
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string().max(255).required('Username is required'),
-          password: Yup.string().max(255).required('Password is required')
+          username: Yup.string().max(255).required(t('Username is required')),
+          password: Yup.string().max(255).required(t('Password is required'))
         })}
         onSubmit={(values) => handleSubmitLogin(values)}
       >
@@ -112,7 +115,7 @@ export default function AuthLogin({ isDemo = false }) {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Username</InputLabel>
+                  <InputLabel htmlFor="email-login">{t('Username')}</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="name"
@@ -120,7 +123,7 @@ export default function AuthLogin({ isDemo = false }) {
                     name="username"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter your username"
+                    placeholder={t('Enter your username')}
                     fullWidth
                     error={Boolean(touched.username && errors.username)}
                   />
@@ -133,7 +136,7 @@ export default function AuthLogin({ isDemo = false }) {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
+                  <InputLabel htmlFor="password-login">{t('Password')}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -156,7 +159,7 @@ export default function AuthLogin({ isDemo = false }) {
                         </IconButton>
                       </InputAdornment>
                     }
-                    placeholder="Enter password"
+                    placeholder={t('Enter your password')}
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -172,10 +175,10 @@ export default function AuthLogin({ isDemo = false }) {
                     control={
                       <Checkbox checked={values.rememberMe} onChange={handleChange} name="rememberMe" color="primary" size="small" />
                     }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
+                    label={<Typography variant="h6">{t('Keep me signed in')}</Typography>}
                   />
                   {/* <Link variant="h6" component={RouterLink} color="text.primary">
-                    Forgot Password?
+                    {t('Forgot Password?')}
                   </Link> */}
                 </Stack>
               </Grid>
@@ -187,7 +190,7 @@ export default function AuthLogin({ isDemo = false }) {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
+                    {t('Login')}
                   </Button>
                 </AnimateButton>
               </Grid>

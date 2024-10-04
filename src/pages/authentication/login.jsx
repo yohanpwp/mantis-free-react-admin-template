@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -14,15 +15,22 @@ import AuthLogin from './auth-forms/AuthLogin';
 export default function Login() {
   // เปลี่ยน header หน้าเพจล็อคอิน
   document.title = 'SCB Payment - Login';
+  // use translation hook for i18n
+  const { t, i18n } = useTranslation();
+
+  // เปลี่ยน��า��า��องหน้าเพจ
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-            <Typography variant="h3">Login</Typography>
+            <Typography variant="h3">{t('Login')}</Typography>
             <Typography component={Link} to="/register" variant="body1" sx={{ textDecoration: 'none' }} color="primary">
-              Don&apos;t have an account?
+              {t("Don't have an account?")}
             </Typography>
           </Stack>
         </Grid>

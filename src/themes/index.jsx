@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // material-ui
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
@@ -15,10 +16,16 @@ import componentsOverride from './overrides';
 
 export default function ThemeCustomization({ children }) {
   const theme = Palette('light', 'default');
+  const { i18n } = useTranslation();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const themeTypography = Typography(`'Public Sans', sans-serif`);
   const themeCustomShadows = useMemo(() => CustomShadows(theme), [theme]);
+  let themeTypography = Typography(`'Public Sans', sans-serif`);
+  if (i18n.language === 'en') {
+    themeTypography = Typography(`'Public Sans', sans-serif`);
+  } else {
+    themeTypography = Typography(`"Krub", sans-serif`);
+  }
 
   const themeOptions = useMemo(
     () => ({

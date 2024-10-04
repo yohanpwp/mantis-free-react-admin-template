@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // material-ui
 import Button from '@mui/material/Button';
@@ -27,6 +28,8 @@ export default function PaymentForm() {
   // กำหนด state ที่ใช้ในโปรแกรม
   const [qrImage, setQrImage] = useState('');
   const [ref, setRef] = useState('');
+  // import i18n hook
+  const { t } = useTranslation();
 
   // เมื่อกด submit ให้ส่งค่า amount ไปยัง api  เพื่อรับ qr code
   const onSubmit = async (values) => {
@@ -102,7 +105,7 @@ export default function PaymentForm() {
                   fullWidth
                   required
                   id="outlined-required"
-                  label="Customer"
+                  label={t('Customer')}
                   name="customerName"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -120,7 +123,7 @@ export default function PaymentForm() {
                   fullWidth
                   required
                   id="outlined-required"
-                  label="Amounts"
+                  label={t('Amount')}
                   name="amounts"
                   type="number"
                   onBlur={handleBlur}
@@ -139,7 +142,7 @@ export default function PaymentForm() {
                 <TextField
                   fullWidth
                   id="outlined-required"
-                  label="Remark"
+                  label={t('Remark')}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   name="remark"
@@ -166,12 +169,12 @@ export default function PaymentForm() {
                       color="primary"
                       onSubmit={handleSubmit}
                     >
-                      Create QR Code
+                      {t('Create QR Code')}
                     </Button>
                   </AnimateButton>
                   <AnimateButton>
                     <Button disableElevation size="large" type="reset" variant="contained" color="secondary" onReset={handleReset}>
-                      Clear
+                      {t('Clear')}
                     </Button>
                   </AnimateButton>
                 </Stack>
@@ -184,11 +187,23 @@ export default function PaymentForm() {
                 </Grid>
                 <Grid size={3}>
                   <Stack sx={{ margin: '50px 20px', alignContent: 'center', justifyContent: 'center' }}>
-                    <Typography>รหัสอ้างอิง : {ref.ref1}</Typography>
-                    <Typography>จำนวนเงิน : {data.amounts} บาท</Typography>
-                    <Typography>ชื่อของลูกค้า : {data.customerName}</Typography>
-                    <Typography>หมดเวลาแสกน : {' ' + ref.expiryDate.split(' ')[1] + ' น.'}</Typography>
-                    {values.remark && <Typography>หมายเหตุ : {data.remark}</Typography>}
+                    <Typography>
+                      {t('Reference')} : {ref.ref1}
+                    </Typography>
+                    <Typography>
+                      {t('Amount')} : {data.amounts} บาท
+                    </Typography>
+                    <Typography>
+                      {t('Customer')} : {data.customerName}
+                    </Typography>
+                    <Typography>
+                      {t('Expired Scan')} : {' ' + ref.expiryDate.split(' ')[1] + ' น.'}
+                    </Typography>
+                    {values.remark && (
+                      <Typography>
+                        {t('Remark')} : {data.remark}
+                      </Typography>
+                    )}
                   </Stack>
                 </Grid>
               </Grid>

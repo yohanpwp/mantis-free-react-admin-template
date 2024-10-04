@@ -139,7 +139,7 @@ export default function Profile() {
       >
         {({ TransitionProps }) => (
           <Transitions type="grow" position="top-right" in={open} {...TransitionProps}>
-            <Paper sx={{ boxShadow: theme.customShadows.z1, minWidth: { xs: 250, md: 300 }, maxWidth: { xs: 250, md: 350 } }}>
+            <Paper sx={{ boxShadow: theme.customShadows.z1, minWidth: { xs: 250, md: 300 }, maxWidth: { xs: 350, md: 400 } }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard elevation={0} border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>

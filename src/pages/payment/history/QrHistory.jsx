@@ -1,12 +1,13 @@
 // import reactHooks from react
 import { useEffect, useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 // import from 3rd party
 import Swal from 'sweetalert2';
 // material-ui
 import { Button, Box, Modal, IconButton, Tooltip } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
-import { FileAddFilled, EditTwoTone, DeleteTwoTone, CheckSquareFilled } from '@ant-design/icons';
+import { FileAddFilled, EditTwoTone, DeleteTwoTone, CheckSquareFilled, CloseCircleFilled } from '@ant-design/icons';
 // project import
 import { getHistoryQrCode, history } from 'utils/qrdatabase';
 import { UserContext } from 'contexts/auth-reducer/ีuserprovider/UserProvider';
@@ -65,11 +66,14 @@ const QrHistory = () => {
   // set state
   const [open, setOpen] = useState({ showStatus: false, image: false });
   const [ref1, setRef1] = useState('');
+  const [refreshData, setRefreshData] = useState(false);
   const [editFormOpen, setEditFormOpen] = useState(false);
   const [columnVisibilityModel, setColumnVisibilityModel] = useState({
     id: false
   });
   const { data, setData, setIsLoading } = useContext(UserContext);
+  // import i18n hook
+  const { t } = useTranslation();
 
   const getUsername = async () => {
     const userData = await getUserData();
@@ -84,10 +88,11 @@ const QrHistory = () => {
         let data = await getHistoryQrCode(user);
         setIsLoading(false);
         setData(data);
+        setRefreshData(false);
       }
     };
     getData();
-  }, [setData]);
+  }, [refreshData]);
 
   function CustomToolbar() {
     const handleClickEdit = () => {
@@ -115,7 +120,7 @@ const QrHistory = () => {
   const showStatus = (params) => {
     let data = params.row;
     const importValue = String(params.value).split(' ');
-    const value = importValue[0];
+    const value = t(importValue[0]);
     const ref = importValue[1];
     const handleOpen = (ref) => {
       setOpen({ showStatus: true, image: false });
@@ -125,11 +130,13 @@ const QrHistory = () => {
       setOpen({ showStatus: false, image: false });
     };
     switch (value) {
-      case 'Pending':
-        return <Button color="warning">{value}</Button>;
-      case 'Failed':
-        return <Button color="error">{value}</Button>;
-      case 'Paid':
+      case t('Canceled'):
+        return (
+          <>
+            <CloseCircleFilled style={{ fontSize: '15px', color: 'orange' }} /> {value}
+          </>
+        );
+      case t('Paid'):
         return (
           <>
             <Tooltip title="Click here to show your information." arrow>
@@ -152,7 +159,7 @@ const QrHistory = () => {
   };
 
   const handleEdit = (params) => {
-    let data = params.row;
+    let qrData = params.row;
     const id = params.value;
     const handleOpen = () => {
       setEditFormOpen(true);
@@ -168,7 +175,7 @@ const QrHistory = () => {
             <EditTwoTone style={{ fontSize: '15px', color: 'blue' }} />
           </IconButton>
         </Tooltip>
-        <EditForm open={editFormOpen} handleClose={handleClose} data={data} check={ref1} />
+        <EditForm open={editFormOpen} handleClose={handleClose} qrData={qrData} check={ref1} setRefreshData={setRefreshData} />
       </>
     );
   };
@@ -186,6 +193,7 @@ const QrHistory = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         history.deleteHistoryQrCode(id);
+        setData(data.filter((item) => item.id!== id.id));
         Swal.fire('Deleted!', '', 'success');
       } else if (result.isDismissed) {
         return;

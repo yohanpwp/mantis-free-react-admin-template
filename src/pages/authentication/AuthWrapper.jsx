@@ -11,6 +11,7 @@ import AuthCard from './AuthCard';
 
 // assets
 import AuthBackground from 'assets/images/auth/AuthBackground';
+import ChooseLanguageContent from 'layout/Dashboard/Header/HeaderContent/Language';
 
 // ==============================|| AUTHENTICATION - WRAPPER ||============================== //
 
@@ -21,6 +22,7 @@ export default function AuthWrapper({ children }) {
       <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
         <Grid item xs={12} sx={{ ml: 3, mt: 3 }}>
           {/* <Logo /> เพิ่ม logo header หน้า login*/}
+          <ChooseLanguageContent />
         </Grid>
         <Grid item xs={12}>
           <Grid

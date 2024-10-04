@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
@@ -36,6 +37,7 @@ export default function AuthRegister() {
   const [level, setLevel] = useState();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -102,13 +104,13 @@ export default function AuthRegister() {
         }}
         //ตั้งเงื่อนไขแสดงhelper text โดยใช้ Yup
         validationSchema={Yup.object().shape({
-          firstName: Yup.string().max(255).required('First Name is required'),
+          firstName: Yup.string().max(255).required(t('First Name is required')),
           // lastname: Yup.string().max(255).required('Last Name is required'),
-          username: Yup.string().max(255).required('Username is required'),
-          password: Yup.string().max(255).required('Password is required'),
+          username: Yup.string().max(255).required(t('Username is required')),
+          password: Yup.string().max(255).required(t('Password is required')),
           confirmPassword: Yup.string()
-            .oneOf([Yup.ref('password'), null], 'Must match "password" field value')
-            .required('ConfirmPassword is required')
+            .oneOf([Yup.ref('password'), null], t('Must match "password" field value'))
+            .required(t('ConfirmPassword is required'))
         })}
         onSubmit={(values) => handleSubmitRegister(values)}
       >
@@ -117,7 +119,7 @@ export default function AuthRegister() {
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="firstname-signup">First Name*</InputLabel>
+                  <InputLabel htmlFor="firstname-signup">{t('First Name')}*</InputLabel>
                   <OutlinedInput
                     id="firstname-login"
                     type="firstname"
@@ -125,7 +127,7 @@ export default function AuthRegister() {
                     name="firstName"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="John"
+                    placeholder={t('John')}
                     fullWidth
                     error={Boolean(touched.firstName && errors.firstName)}
                   />
@@ -138,7 +140,7 @@ export default function AuthRegister() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="lastname-signup">Last Name</InputLabel>
+                  <InputLabel htmlFor="lastname-signup">{t('Last Name')}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.lastName && errors.lastName)}
@@ -148,7 +150,7 @@ export default function AuthRegister() {
                     name="lastName"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Doe"
+                    placeholder={t('Doe')}
                     inputProps={{}}
                   />
                 </Stack>
@@ -160,7 +162,7 @@ export default function AuthRegister() {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-signup">Username*</InputLabel>
+                  <InputLabel htmlFor="email-signup">{t('Username')}*</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.username && errors.username)}
@@ -170,7 +172,7 @@ export default function AuthRegister() {
                     name="username"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Username"
+                    placeholder={t('Username')}
                     inputProps={{}}
                   />
                 </Stack>
@@ -182,7 +184,7 @@ export default function AuthRegister() {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="password-signup">Password</InputLabel>
+                  <InputLabel htmlFor="password-signup">{t('Password')}*</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.password && errors.password)}
@@ -234,7 +236,7 @@ export default function AuthRegister() {
               </Grid>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="-signup">Confirm Password</InputLabel>
+                  <InputLabel htmlFor="-signup">{t('Confirm Password')}</InputLabel>
                   <OutlinedInput
                     fullWidth
                     error={Boolean(touched.confirmPassword && errors.confirmPassword)}
@@ -290,7 +292,7 @@ export default function AuthRegister() {
               <Grid item xs={12}>
                 <AnimateButton>
                   <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Create Account
+                    {t('Create Account')}
                   </Button>
                 </AnimateButton>
               </Grid>

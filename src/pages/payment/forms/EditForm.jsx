@@ -8,9 +8,8 @@ import InputAdornment, { inputAdornmentClasses } from '@mui/material/InputAdornm
 import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { Box, Modal, Typography } from '@mui/material';
+import { Box, Modal, Typography, TextField, Select, MenuItem } from '@mui/material';
 import { CloseCircleFilled } from '@ant-design/icons';
 
 // third party
@@ -46,12 +45,13 @@ const closeButtonStyle = {
 // ============================|| OUTPUT VALUES ||============================ //
 
 const EditForm = (props) => {
-  let { open, handleClose, data, check } = props;
+  let { open, handleClose, check, qrData, setRefreshData } = props;
 
   const handleEdit = async (values) => {
     let result = await history.editHistoryQrCode(values);
     if (result) {
       handleClose();
+      setRefreshData(true);
       Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -67,7 +67,7 @@ const EditForm = (props) => {
     }
   };
 
-  if (data.id === check) {
+  if (qrData.id === check) {
     return (
       <>
         <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
@@ -78,16 +78,13 @@ const EditForm = (props) => {
             <Typography id="modal-modal-title" variant="h4" component="h1">
               Edit description
             </Typography>
-            <Typography>
-              รหัสอ้างอิง: {data.reference}
-              <br />
-            </Typography>
+            <Typography sx={{ marginBottom: '20px' }}>รหัสอ้างอิง: {qrData.reference}</Typography>
             <Formik
               initialValues={{
-                id: data.id,
-                customerName: data.customer,
-                status: data.status,
-                remark: data.remark
+                id: qrData.id,
+                customerName: qrData.customer,
+                status: qrData.status,
+                remark: qrData.remark
               }}
               validationSchema={Yup.object({
                 customerName: Yup.string().required('Name is required')
@@ -121,13 +118,18 @@ const EditForm = (props) => {
                       <TextField
                         fullWidth
                         required
-                        id="outlined-required"
-                        label="Status"
+                        select
+                        id="demo-simple-select"
                         name="status"
+                        value={values.status}
+                        label="Status"
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        value={values.status}
-                      />
+                      >
+                        <MenuItem value={'Created'}>Created</MenuItem>
+                        <MenuItem value={'Canceled'}>Canceled</MenuItem>
+                        <MenuItem value={'Paid'}>Paid</MenuItem>
+                      </TextField>
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
