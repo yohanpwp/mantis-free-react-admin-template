@@ -26,6 +26,7 @@ i18n
         translation: thai
       }
     },
+    lng: localStorage.getItem('lng'),
     fallbackLng: 'en',
 
     interpolation: {

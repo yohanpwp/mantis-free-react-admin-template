@@ -130,9 +130,9 @@ const EditForm = (props) => {
                         onBlur={handleBlur}
                         onChange={handleChange}
                       >
-                        <MenuItem value={'Created'}>Created</MenuItem>
-                        <MenuItem value={'Canceled'}>Canceled</MenuItem>
-                        <MenuItem value={'Paid'}>Paid</MenuItem>
+                        <MenuItem value={'Created'}>{t('Created')}</MenuItem>
+                        <MenuItem value={'Canceled'}>{t('Canceled')}</MenuItem>
+                        <MenuItem value={'Paid'}>{t('Paid')}</MenuItem>
                       </TextField>
                     </Grid>
                     <Grid item xs={12}>

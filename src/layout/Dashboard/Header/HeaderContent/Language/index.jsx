@@ -16,13 +16,16 @@ const ChooseLanguageContent = memo(() => {
   const { t, i18n } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const language = localStorage.getItem('lng');
   const handleLanguageChange = (lng) => {
+    localStorage.setItem('lng', lng);
     i18n.changeLanguage(lng);
   };
 
   const checkLanguage = () => {
-    if (i18n.language === 'en') return <img style={{ width: '20px', height: '20px' }} src={englishIcon} alt="English" />;
-    else if (i18n.language === 'th') return <img style={{ width: '20px', height: '20px' }} src={thaiIcon} alt="Thai" />;
+    if (language === 'en') return <img style={{ width: '20px', height: '20px' }} src={englishIcon} alt="English" />;
+    else if (language === 'th') return <img style={{ width: '20px', height: '20px' }} src={thaiIcon} alt="Thai" />;
+    else return <img style={{ width: '20px', height: '20px' }} src={englishIcon} alt="English" />;
   };
 
   const handleMenu = (event) => {

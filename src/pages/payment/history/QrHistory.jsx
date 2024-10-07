@@ -251,18 +251,26 @@ const QrHistory = () => {
       width: 100,
       renderCell: (params) => (
         <>
-          <Button onClick={() => setOpen({ showStatus: false, image: true })} color="success">
+          <Button
+            onClick={() => {
+              setRef1(params.value);
+              setOpen({ showStatus: false, image: true });
+            }}
+            color="success"
+          >
             Show
           </Button>
           <Modal
             open={open?.image}
-            onClose={() => setOpen({ showStatus: false, image: false })}
+            onClose={() => {
+              setOpen({ showStatus: false, image: false });
+            }}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
             <Box sx={style}>
               <img
-                src={`data:image/png;base64,${params.value}`}
+                src={`data:image/png;base64,${ref1}`}
                 alt="QR Code"
                 style={{ height: '250px', width: '250px', verticalAlign: 'middle' }}
               />
