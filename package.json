@@ -35,6 +35,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "apexcharts": "^3.49.0",
     "axios": "^1.7.7",
+    "exceljs": "^4.4.0",
     "formik": "^2.4.5",
     "framer-motion": "^11.0.8",
     "jsonwebtoken": "^9.0.2",
@@ -58,7 +59,6 @@
     "vite": "^5.2.10",
     "vite-jsconfig-paths": "^2.0.1",
     "web-vitals": "^3.5.2",
-    "yarn": "^1.22.22",
     "yup": "^1.4.0"
   },
   "eslintConfig": {

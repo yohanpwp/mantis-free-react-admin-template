@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { Button, Box, Modal, IconButton, Tooltip } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import { DataGrid, gridClasses, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
-import { FileAddFilled, EditTwoTone, DeleteTwoTone, CheckSquareFilled, CloseCircleFilled } from '@ant-design/icons';
+import { FileAddFilled, EditTwoTone, DeleteTwoTone, CheckSquareFilled, CloseCircleFilled, DownloadOutlined } from '@ant-design/icons';
 // project import
 import { getHistoryQrCode, history } from 'utils/qrdatabase';
 import { UserContext } from 'contexts/auth-reducer/ีuserprovider/UserProvider';
@@ -15,6 +15,7 @@ import { getUserData } from 'utils/userdatabase';
 import QrResponse from './QrResponse';
 import getNameFromBankCode from 'utils/getNameFromBankCode';
 import EditForm from '../forms/EditForm';
+import * as ExcelJS from 'exceljs';
 
 // ==============================|| INPUT VALUE ||============================== //
 
@@ -110,9 +111,11 @@ const QrHistory = () => {
       <GridToolbarContainer>
         <Box sx={{ flexGrow: 1 }} />
         <Button onClick={handleClickEdit} size="small" color="success" startIcon={<EditTwoTone twoToneColor={'#66bb6a'} />}>
-          Edit
+          {t('Edit')}
         </Button>
-        <GridToolbarExport />
+        <Button onClick={handleExportToExcel} size="small" color="primary" startIcon={<DownloadOutlined />}>
+          {t('Export')}
+        </Button>
       </GridToolbarContainer>
     );
   }
@@ -183,17 +186,18 @@ const QrHistory = () => {
   const handleDelete = (params) => {
     const id = { id: params.value };
     Swal.fire({
-      title: 'Are you sure?',
-      text: `You want to delete this QR code?`,
+      title: t('Are you sure?'),
+      text: t(`You want to delete this QR code?`),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: t('Yes, delete it!'),
+      cancelButtonText: t('Cancel')
     }).then((result) => {
       if (result.isConfirmed) {
         history.deleteHistoryQrCode(id);
-        setData(data.filter((item) => item.id!== id.id));
+        setData(data.filter((item) => item.id !== id.id));
         Swal.fire('Deleted!', '', 'success');
       } else if (result.isDismissed) {
         return;
@@ -219,28 +223,28 @@ const QrHistory = () => {
         </>
       )
     },
-    { field: 'index', headerName: 'No.', align: 'center', headerAlign: 'center', width: 50 },
+    { field: 'index', headerName: t('No.'), align: 'center', headerAlign: 'center', width: 50 },
     {
       field: 'dates',
-      headerName: 'Generated dates',
+      headerName: t('Generated Date'),
       sortable: false,
       width: 170,
       valueGetter: (values, rows) => `${rows.dates} ${rows.times}`
     },
-    { field: 'customer', headerName: 'Customer', width: 130 },
-    { field: 'reference', headerName: 'Reference', sortable: false, width: 130 },
-    { field: 'amount', headerName: 'Amounts', sortable: false, align: 'center', headerAlign: 'center', width: 120 },
+    { field: 'customer', headerName: t('Customer'), width: 130 },
+    { field: 'reference', headerName: t('Reference'), sortable: false, width: 130 },
+    { field: 'amount', headerName: t('Amount'), sortable: false, align: 'center', headerAlign: 'center', width: 120 },
     {
       field: 'checkStatus',
-      headerName: 'Status',
+      headerName: t('Status'),
       sortable: false,
       width: 130,
       renderCell: (params) => showStatus(params)
     },
-    { field: 'remark', headerName: 'Remark', sortable: false, width: 130 },
+    { field: 'remark', headerName: t('Remark'), sortable: false, width: 130 },
     {
       field: 'images',
-      headerName: 'QR Images',
+      headerName: t('QR Images'),
       sortable: false,
       align: 'center',
       headerAlign: 'center',
@@ -267,11 +271,11 @@ const QrHistory = () => {
         </>
       )
     },
-    { field: 'payerAccountNumber', headerName: 'payerAccountNumber', sortable: false, width: 130 },
-    { field: 'payerAccountName', headerName: 'payerAccountName', sortable: false, width: 130 },
-    { field: 'sendingBankCode', headerName: 'sendingBank', sortable: false, width: 130 },
-    { field: 'receivingBankCode', headerName: 'receivingBank', sortable: false, width: 130 },
-    { field: 'transactionId', headerName: 'transactionId', sortable: false, width: 130 }
+    { field: 'payerAccountNumber', headerName: t('payerAccountNumber'), sortable: false, width: 130 },
+    { field: 'payerAccountName', headerName: t('payerAccountName'), sortable: false, width: 130 },
+    { field: 'sendingBankCode', headerName: t('sendingBank'), sortable: false, width: 130 },
+    { field: 'receivingBankCode', headerName: t('receivingBank'), sortable: false, width: 130 },
+    { field: 'transactionId', headerName: t('transactionId'), sortable: false, width: 130 }
   ];
 
   let rows = [];
@@ -307,6 +311,45 @@ const QrHistory = () => {
   }
 
   const paginationModel = { page: 0, pageSize: 5 };
+
+  //Build an excel file
+  const handleExportToExcel = () => {
+    const workbook = new ExcelJS.Workbook();
+    const fileName = 'qr_history.xlsx';
+    // Create a worksheet with the first row and column frozen
+    const sheet = workbook.addWorksheet('QR History', { views: [{ state: 'frozen', xSplit: 1, ySplit: 1 }] });
+    sheet.columns = [
+      { header: t('No.'), key: 'index', width: 5 },
+      { header: t('Generated Date'), key: 'dates', width: 15 },
+      { header: t('Customer'), key: 'customer', width: 30 },
+      { header: t('Amount'), key: 'amount', width: 10 },
+      { header: t('Status'), key: 'status', width: 10 },
+      { header: t('ref1'), key: 'reference', width: 10 },
+      { header: t('ref2'), key: 'reference2', width: 5 },
+      { header: t('ref3'), key: 'reference3', width: 5 },
+      { header: t('Remark'), key: 'remark', width: 15 },
+      { header: t('QR Images'), key: 'images', width: 15 },
+      { header: t('payerAccountNumber'), key: 'payerAccountNumber', width: 20 },
+      { header: t('payerAccountName'), key: 'payerAccountName', width: 20 },
+      { header: t('sendingBank'), key: 'sendingBankCode', width: 15 },
+      { header: t('receivingBank'), key: 'receivingBankCode', width: 15 },
+      { header: t('transactionId'), key: 'transactionId', width: 15 }
+    ];
+    sheet.addRows(rows);
+    //Save the excel file by filename
+    workbook.xlsx.writeBuffer().then(function (data) {
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = fileName;
+      anchor.click();
+      window.URL.revokeObjectURL(url);
+    });
+  };
+
   return (
     <StripedDataGrid
       rows={rows}

@@ -51,5 +51,17 @@
     "transactionId" : "transactionId",
     "Search" : "Search",
     "Clear" : "Clear",
-    "QR Code" : "QR Code"
+    "Reset" : "Reset",
+    "QR Code" : "QR Code",
+    "Are you sure?" : "Are you sure?",
+    "You want to delete this QR code?" : "You want to delete this QR code?",
+    "Yes, delete it!" : "Yes, delete it!",
+    "Cancel" : "Cancel",
+    "Result of Fund" : "Result of Funds Transfer (Success)",
+    "Date of Fund" : "Date",
+    "Time of Fund" : "Time",
+    "ref1" : "Ref1",
+    "ref2" : "Ref2",
+    "ref3" : "Ref3",
+    "Edit Description" : "Edit description"
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink, Route, Routes, MemoryRouter, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 // material-ui
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
@@ -18,6 +19,7 @@ export default function NavGroup({ item }) {
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
   const [open, setOpen] = React.useState(false);
+  const { t } = useTranslation();
 
   const handleClick = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -57,7 +59,7 @@ export default function NavGroup({ item }) {
       case 'collapse':
         return (
           <List key={menuItem.id}>
-            <ListItemLink key={menuItem.id} open={open} title={menuItem.title} icon={menuItem.icon} onClick={handleClick} />
+            <ListItemLink key={menuItem.id} open={open} title={t(menuItem.title)} icon={menuItem.icon} onClick={handleClick} />
             <Collapse component="li" in={open} timeout="auto" unmountOnExit>
               {menuItem.children?.map((index) => {
                 return <NavItem key={index.id} item={index} level={2} />;
@@ -84,7 +86,7 @@ export default function NavGroup({ item }) {
         drawerOpen && (
           <Box sx={{ pl: 3, mb: 1.5 }}>
             <Typography variant="subtitle2" color="textSecondary">
-              {item.title}
+              {t(item.title)}
             </Typography>
             {/* only available in paid version */}
           </Box>

@@ -1,8 +1,7 @@
 // import from 3rd party
-
+import { useTranslation } from 'react-i18next';
 // material-ui
 import { Box, Modal, Typography } from '@mui/material';
-
 
 // ==============================|| INPUT STYLE ||============================== //
 const style = {
@@ -21,6 +20,8 @@ const style = {
 const QrResponse = (props) => {
   // create a variable to hold the props
   const { open, handleClose, data, check } = props;
+  // import i18n hook
+  const { t, i18n } = useTranslation();
 
   if (data.reference === check) {
     return (
@@ -28,26 +29,29 @@ const QrResponse = (props) => {
         <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Result of Funds Transfer (Success)
+              {t('Result of Fund')}
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              ชื่อผู้ชำระ: {data.payerAccountName}
+              {t('payerAccountName')}: {data.payerAccountName}
               <br />
-              รหัสใบแจ้งชำระ: {data.transactionId}
+              {t('transactionId')}: {data.transactionId}
               <br />
-              บัญชีธนาคาร: {`${data.sendingBankCode}`}
+              {t('sendingBank')}: {`${data.sendingBankCode}`}
               <br />
-              จำนวนเงิน: {`${data.amount} บาท`}
+              {t('Amount')}: {`${data.amount} บาท`}
               <br />
-              วันที่ชำระ: {Intl.DateTimeFormat(['th-TH'], { dateStyle: 'long' }).format(Date.parse(data?.notShowDates))}
+              {t('Date of Fund')}:{' '}
+              {i18n.language == 'th'
+                ? Intl.DateTimeFormat(['th-TH'], { dateStyle: 'long' }).format(Date.parse(data?.notShowDates))
+                : Intl.DateTimeFormat(['en-EN'], { dateStyle: 'long' }).format(Date.parse(data?.notShowDates))}
               <br />
-              เวลาที่ชำระ: {data.times}
+              {t('Time of Fund')}: {data.times}
               <br />
-              รหัสอ้างอิง1: {data.reference}
+              {t('ref1')}: {data.reference}
               <br />
-              รหัสอ้างอิง2: {data.reference2}
+              {t('ref2')}: {data.reference2}
               <br />
-              รหัสอ้างอิง3: {data.reference3}
+              {t('ref3')}: {data.reference3}
             </Typography>
           </Box>
         </Modal>

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { forwardRef, useEffect } from 'react';
 import { Link, useLocation, matchPath } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -16,6 +17,8 @@ import { handlerActiveItem, useGetMenuMaster } from 'api/menu';
 
 export default function NavItem({ item, level }) {
   const theme = useTheme();
+
+  const { t } = useTranslation();
 
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
@@ -113,7 +116,7 @@ export default function NavItem({ item, level }) {
         <ListItemText
           primary={
             <Typography variant="h6" sx={{ color: isSelected ? iconSelectedColor : textColor }}>
-              {item.title}
+              {t(item.title)}
             </Typography>
           }
         />

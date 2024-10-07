@@ -16,6 +16,7 @@ import { CloseCircleFilled } from '@ant-design/icons';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
 
 // project import
 import AnimateButton from 'components/@extended/AnimateButton';
@@ -46,6 +47,7 @@ const closeButtonStyle = {
 
 const EditForm = (props) => {
   let { open, handleClose, check, qrData, setRefreshData } = props;
+  const { t } = useTranslation();
 
   const handleEdit = async (values) => {
     let result = await history.editHistoryQrCode(values);
@@ -76,9 +78,11 @@ const EditForm = (props) => {
               <CloseCircleFilled />
             </IconButton>
             <Typography id="modal-modal-title" variant="h4" component="h1">
-              Edit description
+              {t('Edit Description')}
             </Typography>
-            <Typography sx={{ marginBottom: '20px' }}>รหัสอ้างอิง: {qrData.reference}</Typography>
+            <Typography sx={{ marginBottom: '20px' }}>
+              {t('Reference')}: {qrData.reference}
+            </Typography>
             <Formik
               initialValues={{
                 id: qrData.id,
@@ -101,7 +105,7 @@ const EditForm = (props) => {
                         fullWidth
                         required
                         id="outlined-required"
-                        label="Customer"
+                        label={t('Customer')}
                         name="customerName"
                         onBlur={handleBlur}
                         onChange={handleChange}
@@ -122,7 +126,7 @@ const EditForm = (props) => {
                         id="demo-simple-select"
                         name="status"
                         value={values.status}
-                        label="Status"
+                        label={t('Status')}
                         onBlur={handleBlur}
                         onChange={handleChange}
                       >
@@ -135,7 +139,7 @@ const EditForm = (props) => {
                       <TextField
                         fullWidth
                         id="outlined-required"
-                        label="Remark"
+                        label={t('Remark')}
                         name="remark"
                         onBlur={handleBlur}
                         onChange={handleChange}
@@ -164,12 +168,12 @@ const EditForm = (props) => {
                             color="primary"
                             onSubmit={handleSubmit}
                           >
-                            Edit
+                            {t('Edit')}
                           </Button>
                         </AnimateButton>
                         <AnimateButton>
                           <Button disableElevation size="large" type="reset" variant="contained" color="secondary" onReset={handleReset}>
-                            Reset
+                            {t('Reset')}
                           </Button>
                         </AnimateButton>
                       </Stack>
